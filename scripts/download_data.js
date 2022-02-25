@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs/promises");
 
 const DATA_DIR = "../public/data";
-
+const PRECISION = 5; // https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
 const SOURCES = [
     {
         name: "council_lights",
@@ -50,7 +50,24 @@ async function run() {
 
         // Pass it to the handler
         console.log(`Running handler for ${source.name}`);
-        let data = source.handler(raw_data);
+        let data = source
+            .handler(raw_data)
+            .map(([val, coords]) => [
+                val,
+                coords.map(c => Math.round(c * Math.pow(10, PRECISION)) / Math.pow(10, PRECISION))
+            ]);
+        
+        // Filter nearby coordinates
+        let combinations = [];
+        let start_count = data.length;
+        data = data.filter(([_, coords]) => {
+            if (!combinations.includes(coords.join(","))) {
+                combinations.push(coords.join(","));
+
+                return true;
+            } else return false;
+        });
+        console.log(`Filtered data from ${start_count} to ${data.length}`);
 
         // Save as file
         let file_path = path.join(DATA_DIR, `${source.name}.json`);
