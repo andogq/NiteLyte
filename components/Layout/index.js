@@ -10,25 +10,23 @@ import "react-spring-bottom-sheet/dist/style.css";
 export default function Layout({ children }) {
     return (
         <Box className={css.container}>
-            <Map/>
+            <Map />
 
             <BottomSheet
                 open
                 blocking={false}
-                header={(
-                    <Box>
-                        This will be some buttons
-                    </Box>
-                )}
-                snapPoints={state => [
+                header={<Box>This will be some buttons</Box>}
+                snapPoints={(state) => [
                     state.headerHeight,
                     state.maxHeight * 0.75,
-                    state.maxHeight
+                    state.maxHeight,
                 ]}
                 defaultSnap={() => 0}
             >
-                {/* Bottom sheet, app will go here */}
-                {children}
+                <Box className={css.children_container} >
+                    {/* Bottom sheet, app will go here */}
+                    {children}
+                </Box>
             </BottomSheet>
         </Box>
     );
