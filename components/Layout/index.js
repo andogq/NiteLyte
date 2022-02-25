@@ -1,15 +1,16 @@
+import css from "./layout.module.css";
+
 import { Box } from "@mantine/core";
+
+import Map from "../Map";
 
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
 
 export default function Layout({ children }) {
     return (
-        <Box>
-            <Box style={{ background: "cyan" }}>
-                {/* map */}
-                Map stuff wow
-            </Box>
+        <Box className={css.container}>
+            <Map/>
 
             <BottomSheet
                 open
