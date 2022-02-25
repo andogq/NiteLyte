@@ -1,4 +1,3 @@
-import css from "./map.module.css";
 import { useRef, useState, useEffect } from "react";
 
 import mapbox from "mapbox-gl";
@@ -17,9 +16,21 @@ export default function Map() {
             container: map_container.current,
             style: "mapbox://styles/mapbox/dark-v10",
             center: { lat: -37.814, lng: 144.963 },
-            zoom: 9
-        })
+            zoom: 9,
+        });
     }, []);
 
-    return <Box className={css.container} ref={map_container} />;
+    return (
+        <Box
+            sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+
+                height: "100%",
+                width: "100%",
+            }}
+            ref={map_container}
+        />
+    );
 }
