@@ -5,3 +5,7 @@
 
     overflow: hidden;
 }
+
+.children_container {
+    padding: 1rem;
+}
