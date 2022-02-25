@@ -15,6 +15,7 @@
     "lucide-react": "^0.17.2",
     "mapbox-gl": "^2.7.0",
     "next": "12.1.0",
+    "node-fetch": "^2.6.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-spring-bottom-sheet": "^3.4.0"
