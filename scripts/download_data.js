@@ -10,22 +10,43 @@ const SOURCES = [
         url: "https://data.melbourne.vic.gov.au/api/geospatial/hg8j-vcww?method=export&format=GeoJSON",
         handler: raw_data => (
             raw_data.features.map(feature => [
-                Number(feature.properties.label),
+                Number(feature.properties.label), // lux
                 [
-                    feature.geometry.coordinates[0],
-                    feature.geometry.coordinates[1]
+                    feature.geometry.coordinates[0], // lng
+                    feature.geometry.coordinates[1]  // lat
                 ]
             ])
+        )
+    },
+    {
+        name: "feature_lights",
+        url: "https://data.melbourne.vic.gov.au/api/views/4j42-79hg/rows.csv",
+        json: false,
+        handler: raw_data => (
+            raw_data.split("\n").map(light => {
+                light = light.split(",");
+
+                return [
+                    Number(light[3]), // Lamp wattage,
+                    [
+                        Number(light[6]), // lng
+                        Number(light[5])  // lat
+                    ]
+                ];
+            }).slice(1)
         )
     }
 ];
 
 async function run() {
-    for (let source of SOURCES) {        
+    let args = process.argv.slice(2);
+    let selected_sources = SOURCES.filter(({ name }) => args.length === 0 || args.includes(name));
+    
+    for (let source of selected_sources) {        
         // Download the data
         console.log(`Downloading ${source.name}`);
-        let response = await fetch(source.url)
-        let raw_data = await response.json();
+        let response = await fetch(source.url);
+        let raw_data = await (source.json === false ? response.text() : response.json());
 
         // Pass it to the handler
         console.log(`Running handler for ${source.name}`);
@@ -36,7 +57,6 @@ async function run() {
         console.log(`Saving to file ${file_path}`);
         await fs.writeFile(file_path, JSON.stringify(data));
     }
-
 }
 
 run();

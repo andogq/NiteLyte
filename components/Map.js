@@ -28,6 +28,23 @@ export default function Map() {
         })
     }, [map.current, council_lights]);
 
+    const [feature_lights, set_feature_lights] = useState([]);
+    useEffect(() => {
+        if (map.current) map.current.getSource("feature_lights").setData({
+            type: "FeatureCollection",
+            features: feature_lights.map(light => ({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: light[1]
+                },
+                properties: {
+                    wattage: light[0]
+                }
+            }))
+        })
+    }, [map.current, feature_lights]);
+
     useEffect(() => {
         let _map = new mapboxgl.Map({
             container: map_container.current,
@@ -58,6 +75,28 @@ export default function Map() {
             fetch("/data/council_lights.json").then(async response => {
                 let data = await response.json();
                 set_council_lights(data);
+            });
+
+            _map.addSource("feature_lights", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: []
+                }
+            });
+
+            _map.addLayer({
+                id: "feature_lights",
+                type: "circle",
+                source: "feature_lights",
+                paint: {
+                    "circle-color": "red"
+                }
+            });
+
+            fetch("/data/feature_lights.json").then(async response => {
+                let data = await response.json();
+                set_feature_lights(data);
             });
         });
     }, []);
