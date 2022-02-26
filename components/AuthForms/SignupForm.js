@@ -6,6 +6,7 @@ import 'react-phone-input-2/lib/style.css'
 import { auth } from "../../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { saveNewUser } from "../../pages/api/firebase_auth";
+import { nitelyteDark } from "../../styles/constants";
 
 export default function LoginForm() {
     const [loading, setLoading] = useState(false);
@@ -89,16 +90,16 @@ export default function LoginForm() {
             value={form.values.phone}
             onChange={(value) => {console.log(value); setPhone(value)}}
             inputStyle={{
-                backgroundColor: '#2C2E33',
+                backgroundColor: nitelyteDark[5],
                 borderWidth: 0,
-                color: '#A6A7AB'
+                color: nitelyteDark[0]
             }}
             buttonStyle={{
-                backgroundColor: '#2C2E33',
-                borderColor: '#5c5f66',
+                backgroundColor: nitelyteDark[5],
+                borderColor: nitelyteDark[4],
             }}
             dropdownStyle={{
-                color: 'black'
+                color: nitelyteDark[9]
             }}
             dropdownClass="phoneInputDropdown"
         />
