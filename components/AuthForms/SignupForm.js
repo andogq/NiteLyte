@@ -31,7 +31,6 @@ export default function LoginForm() {
     });
 
     const handleSubmit = async (values) => {
-        console.log("here")
         setLoading(true);
         //TODO: dont forget to incorporate phone in here
         try {
@@ -87,7 +86,7 @@ export default function LoginForm() {
         <PhoneInput
             country={'au'}
             value={form.values.phone}
-            onChange={(value) => {console.log(value); setPhone(value)}}
+            onChange={(value) => {setPhone(value)}}
             inputStyle={{
                 backgroundColor: '#2C2E33',
                 borderWidth: 0,
