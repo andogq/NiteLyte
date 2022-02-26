@@ -72,9 +72,9 @@ export default function EmergencyContactForm() {
                 {contacts.map((x, i) => {
                     return (
                         <>
-                            {i == 0 && <Title order={5}>Primary Contact</Title>}
+                            {i == 0 && <Title order={4}>Primary Contact</Title>}
                             {i == 1 && (
-                                <Title order={5}>Secondary Contact</Title>
+                                <Title order={4}>Secondary Contact</Title>
                             )}
                             <TextInput
                                 required
@@ -97,8 +97,15 @@ export default function EmergencyContactForm() {
                                 title="Please enter a valid relationship."
                             />
                             <Box mt={5}>
-                                <Text variant="text" size="sm" weight="500">
-                                    Phone Number
+                                <Text
+                                    variant="text"
+                                    weight="500"
+                                    style={{
+                                        "font-size": "16px",
+                                        color: "#acaebf",
+                                    }}
+                                >
+                                    Phone Number{" "}
                                     <Text inherit component="span" color="red">
                                         *
                                     </Text>

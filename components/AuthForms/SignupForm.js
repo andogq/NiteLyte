@@ -107,7 +107,11 @@ export default function LoginForm() {
             />
 
             <Box mt={5}>
-                <Text variant="text" size="sm" weight="500">
+                <Text
+                    variant="text"
+                    weight="500"
+                    style={{ "font-size": "16px", color: "#acaebf" }}
+                >
                     Phone Number{" "}
                     <Text inherit component="span" color="red">
                         *

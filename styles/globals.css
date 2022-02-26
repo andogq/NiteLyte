@@ -22,15 +22,25 @@ a {
     margin: 0;
 }
 
+/* overriding form style */
+.mantine-11tt6hu {
+    font-size: 16px;
+    color: #acaebf;
+}
+
+.mantine-1s8spa1 {
+    font-size: 16px;
+}
+
 /* overriding bottom sheet colours */
 [data-rsbs-scroll] {
     background-color: #07081b;
 }
-  
+
 [data-rsbs-header] {
     background-color: #1d1e30;
 }
 
 .firebase-emulator-warning {
-    display:none;
+    display: none;
 }
