@@ -12,6 +12,7 @@
     "@mantine/core": "^3.6.11",
     "@mantine/hooks": "^3.6.11",
     "@mantine/next": "^3.6.11",
+    "firebase": "^9.6.7",
     "lucide-react": "^0.17.2",
     "mapbox-gl": "^2.7.0",
     "next": "12.1.0",
