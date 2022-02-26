@@ -17,7 +17,7 @@ export default function Profile() {
             if (user) {
                 retrieveUserDetails(user.uid)
                     .then(setUser(user))
-                    .catch((error) => console.log(error));
+                    .catch((error) => console.error(error));
             }
         });
         // cleanup to prevent memory leaks

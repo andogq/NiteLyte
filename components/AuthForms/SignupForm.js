@@ -39,7 +39,6 @@ export default function LoginForm() {
     });
 
     const handleSubmit = async (values) => {
-        console.log("here");
         setLoading(true);
         //TODO: dont forget to incorporate phone in here
         try {
@@ -54,7 +53,7 @@ export default function LoginForm() {
                 phone: phone,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             setServerError(error.message);
             form.setFieldError("email", true);
         } finally {
@@ -121,10 +120,7 @@ export default function LoginForm() {
                     country={"au"}
                     onlyCountries={["au"]}
                     value={form.values.phone}
-                    onChange={(value) => {
-                        console.log(value);
-                        setPhone(value);
-                    }}
+                    onChange={setPhone}
                     inputStyle={{
                         backgroundColor: nitelyteDark[5],
                         borderWidth: 0,
