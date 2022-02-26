@@ -22,11 +22,11 @@ export default function SOS() {
                 onClose={() => setOpened(false)}
             >
                 <Text size="sm" style={{ marginBottom: 10 }} weight={500}>
-                Message has been sent
+                Message has been sent to the authorities and your emergency contacts! 
                 </Text>
             </Modal>
-            <Text>Press </Text>
-            <Button onClick={on_click}>Send</Button>
+            <Text>Press the button to alert the authorities and your emergency contacts</Text>
+            <Button onClick={on_click}>Send Help</Button>
         </Box>
 
     )
