@@ -13,7 +13,7 @@ export default function Login() {
     }
 
     return (
-        <Box m={10}>
+        <Box m={10} >
             <Tabs active={activeTab} onTabChange={_handleTabChange}>
                 <Tabs.Tab label="Login" tabKey="login" icon={<User />}>
                     <LoginForm/>

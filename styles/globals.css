@@ -21,3 +21,12 @@ a {
     padding: 0;
     margin: 0;
 }
+
+/* overriding bottom sheet colours */
+[data-rsbs-scroll] {
+    background-color: #101113;
+}
+  
+[data-rsbs-header] {
+    background-color: #1A1B1E;
+}
