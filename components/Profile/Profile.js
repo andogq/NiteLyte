@@ -12,7 +12,7 @@ export default function ProfilePage() {
                 <DisabledOptionButton text="test123" />
                 <DisabledOptionButton text="test@mail.com" />
                 <DisabledOptionButton text="614186029069" />
-                <OptionButton text="Emergency Contacts" />
+                <OptionButton text="Emergency Contacts" href="/add_emergency_contact" />
                 <OptionButton text="Settings" href="/settings" />
                 <OptionButton text="Help and Feedback" />
                 <Divider />

@@ -4,7 +4,6 @@ import {
     LoadingOverlay,
     TextInput,
     PasswordInput,
-    Button,
     Box,
     Text,
 } from "@mantine/core";
@@ -116,6 +115,7 @@ export default function LoginForm() {
                 </Text>
                 <PhoneInput
                     country={"au"}
+                    onlyCountries={["au"]}
                     value={form.values.phone}
                     onChange={(value) => {
                         console.log(value);

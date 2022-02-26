@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Divider } from "@mantine/core";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { nitelyteDark } from "../../styles/constants";
 import {
     LoadingOverlay,
     TextInput,
@@ -11,6 +12,7 @@ import {
     Title,
     Text,
 } from "@mantine/core";
+import { SubmitButton } from "../Buttons";
 
 export default function EmergencyContactForm() {
     const emptyContact = {
@@ -118,6 +120,18 @@ export default function EmergencyContactForm() {
                                     // TODO: prevent form from submitting when phone format is invalid
                                     // pattern="^(\+?61|0)4\d{8}$"
                                     // title="Invalid format."
+                                    inputStyle={{
+                                        backgroundColor: nitelyteDark[5],
+                                        borderWidth: 0,
+                                        color: nitelyteDark[0],
+                                    }}
+                                    buttonStyle={{
+                                        backgroundColor: nitelyteDark[5],
+                                        borderColor: nitelyteDark[4],
+                                    }}
+                                    dropdownStyle={{
+                                        color: nitelyteDark[9],
+                                    }}
                                 />
                             </Box>
                             {contacts.length >= 3 && i >= 2 && (
@@ -135,9 +149,9 @@ export default function EmergencyContactForm() {
                 <Text onClick={handleAddClick} color="dimmed">
                     + Add more emergency contacts
                 </Text>
-                <Button type="submit" mt={20}>
-                    Submit
-                </Button>
+
+                <br></br>
+                <SubmitButton type="submit" text="Submit" />
             </form>
         </div>
     );
