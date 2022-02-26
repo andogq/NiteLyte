@@ -25,7 +25,7 @@ function function_or_string(thing, param) {
     else return thing;
 }
 
-export default function NavigationBar() {
+export default function NavigationBar({ open }) {
     return (
         <>
             {/* Workaround to unstylable header::before */}
@@ -41,8 +41,11 @@ export default function NavigationBar() {
             >
                 {ICONS.map((icon) => (
                     <Center key={icon.href}>
-                        <Link href={icon.href}>
+                        <Link
+                            href={icon.href}
+                        >
                             <Box
+                                onClick={open}
                                 sx={(theme) => ({
                                     backgroundColor:
                                         icon.filled &&
@@ -56,6 +59,8 @@ export default function NavigationBar() {
                                     alignItems: "center",
 
                                     padding: theme.spacing.md,
+
+                                    cursor: "pointer"
                                 })}
                             >
                                 <icon.icon
