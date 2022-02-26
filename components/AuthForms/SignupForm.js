@@ -3,7 +3,6 @@ import { useState } from "react";
 import { LoadingOverlay, TextInput, PasswordInput , Button, Box, Text} from "@mantine/core";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { auth } from '../../lib/firebase'
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
