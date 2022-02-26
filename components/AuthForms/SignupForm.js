@@ -3,6 +3,7 @@ import { useState } from "react";
 import { LoadingOverlay, TextInput, PasswordInput , Button, Box, Text} from "@mantine/core";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { auth } from '../../lib/firebase'
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -77,6 +78,19 @@ export default function LoginForm() {
           country={'au'}
           value={form.values.phone}
           onChange={(value) => {console.log(value); setPhone(value)}}
+          inputStyle={{
+              backgroundColor: '#2C2E33',
+              borderWidth: 0,
+              color: '#A6A7AB'
+          }}
+          buttonStyle={{
+              backgroundColor: '#2C2E33',
+              borderColor: '#5c5f66',
+          }}
+          dropdownStyle={{
+              color: 'black'
+          }}
+          dropdownClass="phoneInputDropdown"
         />
       </Box>
 
