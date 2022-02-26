@@ -1,20 +1,23 @@
 import { Divider } from "@mantine/core";
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import {
-    LoadingOverlay,
-    TextInput,
-    Box,
-    Button,
-    Title,
-    Text,
-} from "@mantine/core";
+import { Title, SimpleGrid } from "@mantine/core";
+import { DisabledOptionButton, OptionButton } from "../Buttons";
 
 // TODO: Hardcode Profile
-export default function Profile() {
+export default function ProfilePage() {
     return (
         <div>
             <Title order={2}>Profile</Title>
+            <br></br>
+            <SimpleGrid cols={1} spacing="xl">
+                <DisabledOptionButton text="test123" />
+                <DisabledOptionButton text="test@mail.com" />
+                <DisabledOptionButton text="614186029069" />
+                <OptionButton text="Emergency Contacts" />
+                <OptionButton text="Settings" />
+                <OptionButton text="Help and Feedback" />
+                <Divider />
+            </SimpleGrid>
         </div>
     );
 }

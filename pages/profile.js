@@ -4,7 +4,10 @@ import { useContext, useEffect } from "react";
 import Login from "./login";
 import { retrieveUserDetails } from "./api/firebase_auth";
 import { signOut } from "firebase/auth";
+import { SimpleGrid } from "@mantine/core";
 import { UserContext } from "../context";
+import { ProfilePage } from "../components/Profile";
+import { SubmitButton } from "../components/Buttons";
 
 export default function Profile() {
     const { user, setUser } = useContext(UserContext);
@@ -28,8 +31,11 @@ export default function Profile() {
 
     const renderProfile = () => (
         <>
-            <Text>{auth.currentUser.email}</Text>
-            <Button onClick={_handleSignOut}>Sign Out</Button>
+            <ProfilePage />
+            <br></br>
+            <SimpleGrid cols={1} spacing="xl">
+                <SubmitButton onClick={_handleSignOut} text="Sign Out" />
+            </SimpleGrid>
         </>
     );
 
