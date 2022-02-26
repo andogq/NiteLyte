@@ -31,3 +31,6 @@ a {
     background-color: #1d1e30;
 }
 
+.firebase-emulator-warning {
+    display:none;
+}
