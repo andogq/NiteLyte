@@ -1,9 +1,11 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 
 import mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+import { GeoLocation } from "../context";
 
 import { firestore } from "../lib/firebase";
 import {
@@ -25,7 +27,7 @@ const LIGHT_SOURCES = ["council_lights.json", "feature_lights.json"];
 const users_collection = collection(firestore, "users");
 const share_collection = collection(firestore, "share_urls");
 
-export default function Map() {
+export default function Map({ on_locate }) {
     const map = useRef(null);
     const map_container = useRef(null);
 
@@ -104,34 +106,38 @@ export default function Map() {
         });
         map.current = _map;
 
+        const geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true,
+            },
+            trackUserLocation: true,
+            showUserHeading: true,
+            showAccuracyCircle: true,
+        });
+        geolocate.on("geolocate", async (position) => {
+            on_locate({ lat: position.coords.latitude, lon: position.coords.longitude });
+
+            if (live_location) {
+                const user_doc = doc(users_collection, UID);
+
+                await updateDoc(user_doc, {
+                    last_location: {
+                        accuracy: position.coords.accuracy,
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude,
+                        time: position.timestamp,
+                    },
+                });
+            }
+        });
+        _map.addControl(geolocate);
+
         _map.on("load", () => {
             const label_layer =
                 _map.getStyle().layers.find((layer) => layer.type === "symbol")
                     ?.id ?? null;
-
-            const geolocate = new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true,
-                },
-                trackUserLocation: true,
-                showUserHeading: true,
-                showAccuracyCircle: true,
-            });
-            geolocate.on("geolocate", async (position) => {
-                if (live_location) {
-                    const user_doc = doc(users_collection, UID);
-
-                    await updateDoc(user_doc, {
-                        last_location: {
-                            accuracy: position.coords.accuracy,
-                            lat: position.coords.latitude,
-                            lon: position.coords.longitude,
-                            time: position.timestamp,
-                        },
-                    });
-                }
-            });
-            _map.addControl(geolocate);
+            
+            geolocate.trigger();
 
             _map.addSource("share_location", {
                 type: "geojson",
