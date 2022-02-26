@@ -40,12 +40,8 @@ export default function Profile() {
     );
 
     const renderScreen = () => {
-        return (
-            user ?
-                renderProfile():
-                <Login/ >
-        );
-    }
+        return user ? renderProfile() : <Login />;
+    };
 
     return <Box>{renderScreen()}</Box>;
 }
