@@ -13,19 +13,16 @@ import {
 } from "@mantine/core";
 
 export default function EmergencyContactForm() {
+  const emptyContact = {
+    name: "",
+    relationship: "",
+    phone: "",
+  };
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(null);
   const [contacts, setContacts] = useState([
-    {
-      name: "",
-      relationship: "",
-      phone: "",
-    },
-    {
-      name: "",
-      relationship: "",
-      phone: "",
-    },
+    { ...emptyContact },
+    { ...emptyContact },
   ]);
 
   const form = useForm({
@@ -46,6 +43,16 @@ export default function EmergencyContactForm() {
     setContacts(list);
   };
 
+  const handleRemoveClick = (index) => {
+    const list = [...contacts];
+    list.splice(index, 1);
+    setContacts(list);
+  };
+
+  const handleAddClick = () => {
+    setContacts([...contacts, { ...emptyContact }]);
+  };
+
   const handleSubmit = (value) => {
     // setLoading(true);
     console.log(contacts);
@@ -54,7 +61,7 @@ export default function EmergencyContactForm() {
 
   return (
     <div>
-      <Title order={3}>Emergency Contact</Title>
+      <Title order={2}>Emergency Contacts</Title>
       <form
         onSubmit={form.onSubmit(handleSubmit)}
         style={{ position: "relative" }}
@@ -63,6 +70,8 @@ export default function EmergencyContactForm() {
         {contacts.map((x, i) => {
           return (
             <>
+              {i == 0 && <Title order={5}>Primary Contact</Title>}
+              {i == 1 && <Title order={5}>Secondary Contact</Title>}
               <TextInput
                 required
                 label="Full Name"
@@ -91,6 +100,10 @@ export default function EmergencyContactForm() {
                   </Text>
                 </Text>
                 <PhoneInput
+                  // TODO: inputProps doesnt work
+                  // inputProps={{
+                  //   required: true,
+                  // }}
                   country={"au"}
                   onlyCountries={["au"]}
                   isValid={(value) => {
@@ -103,16 +116,22 @@ export default function EmergencyContactForm() {
                   // title="Invalid format."
                 />
               </Box>
+              {contacts.length >= 3 && i >= 2 && (
+                <Text onClick={() => handleRemoveClick(i)} color="dimmed">
+                  - Remove
+                </Text>
+              )}
               <br></br> <Divider variant="dashed" />
             </>
           );
         })}
+        <Text onClick={handleAddClick} color="dimmed">
+          + Add more emergency contacts
+        </Text>
         <Button type="submit" mt={20}>
           Submit
         </Button>
       </form>
-
-      <div style={{ marginTop: 20 }}>{JSON.stringify(contacts)}</div>
     </div>
   );
 }
