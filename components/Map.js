@@ -47,6 +47,9 @@ export default function Map({ on_locate }) {
                         type: "Point",
                         coordinates: light[1],
                     },
+                    properties: {
+                        lux: light[0]
+                    }
                 })),
             });
     }, [map.current, lights]);
@@ -173,45 +176,37 @@ export default function Map({ on_locate }) {
                     type: "heatmap",
                     source: "lights",
                     paint: {
+                        "heatmap-weight": ["get", "lux"],
+                        "heatmap-intensity": 0.005,
                         "heatmap-radius": [
                             "interpolate",
                             ["linear"],
                             ["zoom"],
-                            13,
-                            5,
-                            15,
-                            10,
-                            18,
-                            15,
+                            10, 5,
+                            13, 10,
+                            15, 20,
                         ],
                         "heatmap-color": [
-                            "interpolate",
-                            ["linear"],
-                            ["heatmap-density"],
-                            0,
-                            "rgba(0, 0, 0, 0)",
-                            0.1,
-                            theme.colors.yellow[0],
-                            0.3,
-                            theme.colors.yellow[1],
-                            0.5,
-                            theme.colors.yellow[2],
-                            0.7,
-                            theme.colors.yellow[3],
-                            1,
-                            theme.colors.yellow[4],
+                            "interpolate", ["exponential", 10], ["heatmap-density"],
+                            0, "rgba(0, 0, 0, 0)",
+                            0.1, theme.colors.yellow[0],
+                            0.3, theme.colors.yellow[1],
+                            0.7, theme.colors.yellow[2],
+                            0.9, theme.colors.yellow[3],
+                            1, theme.colors.yellow[4],
                         ],
-                        "heatmap-opacity": 0.9,
+                        "heatmap-opacity": 0.75,
                     },
                 },
                 label_layer
             );
 
-            for (let source of LIGHT_SOURCES)
+            for (let source of LIGHT_SOURCES) {
                 fetch(`/data/${source}`).then(async (response) => {
                     let data = await response.json();
                     set_lights((l) => [...l, ...data]);
                 });
+            }
         });
     }, []);
 
