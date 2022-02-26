@@ -1,9 +1,8 @@
-const functions = require("firebase-functions");
+import functions from "firebase-functions";
+import { send } from "./lib/twilio.js"
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+export const send_message = functions.https.onCall(async (data, context) => {
+    console.log("Sending text message");
+
+    //send("phone_number", "Hello this is a test");
+});
