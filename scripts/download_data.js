@@ -2,6 +2,13 @@ const fetch = require("node-fetch");
 const path = require("path");
 const fs = require("fs/promises");
 
+const LED_LUMENS_PER_WATT = 90;
+const LIGHT_RADIUS = 5; // Guestimate
+
+function watt_to_lux(watt) {
+    return watt *  LED_LUMENS_PER_WATT / Math.pow(Math.PI * LIGHT_RADIUS, 2);
+}
+
 const DATA_DIR = "../public/data";
 const PRECISION = 5; // https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
 const SOURCES = [
@@ -27,7 +34,7 @@ const SOURCES = [
                 light = light.split(",");
 
                 return [
-                    Number(light[3]), // Lamp wattage,
+                    watt_to_lux(Number(light[3])),
                     [
                         Number(light[6]), // lng
                         Number(light[5])  // lat
