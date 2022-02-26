@@ -4,6 +4,12 @@ import mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+import { firestore } from "../lib/firebase";
+import { updateDoc, doc, collection } from "firebase/firestore";
+
+// TODO: Waiting on auth to use user's ID
+const UID = "LlmWiUVJFYaKjJr5tlGd";
+
 import { Box, useMantineTheme } from "@mantine/core";
 import mapboxgl from "mapbox-gl";
 
@@ -12,9 +18,13 @@ const LIGHT_SOURCES = [
     "feature_lights.json"
 ];
 
+const users_collection = collection(firestore, "users");
+
 export default function Map() {
     const map = useRef(null);
     const map_container = useRef(null);
+
+    const [live_location, set_live_location] = useState(true);
 
     const theme = useMantineTheme();
 
@@ -44,16 +54,31 @@ export default function Map() {
         _map.on("load", () => {
             const label_layer = _map.getStyle().layers.find(layer => layer.type === "symbol")?.id ?? null;
 
-            _map.addControl(
-                new mapboxgl.GeolocateControl({
-                    positionOptions: {
-                        enableHighAccuracy: true
-                    },
-                    trackUserLocation: true,
-                    showUserHeading: true,
-                    showAccuracyCircle: true
-                })
-            );
+            const geolocate = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                trackUserLocation: true,
+                showUserHeading: true,
+                showAccuracyCircle: true
+            });
+            geolocate.on("geolocate", async position => {
+                if (live_location) {
+                    const user_doc = doc(users_collection, UID);
+
+                    let new_doc = await updateDoc(user_doc, {
+                        last_location: {
+                            accuracy: position.coords.accuracy,
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude,
+                            time: position.timestamp
+                        }
+                    });
+
+                    console.log(new_doc);
+                }
+            });
+            _map.addControl(geolocate);
             
             _map.addSource("lights", {
                 type: "geojson",
