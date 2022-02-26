@@ -1,8 +1,9 @@
 import { Button } from "@mantine/core";
+import Link from "next/link";
 
-const SubmitButton = ({ text, onClick, href, type }) => (
+const SubmitButton = ({ text, onClick, href = "", type }) => (
     <Button onClick={onClick} size="lg" type={type} fullWidth>
-        <a href={href}>{text}</a>
+        <Link href={href}>{text}</Link>
     </Button>
 );
 
