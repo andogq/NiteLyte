@@ -1,5 +1,6 @@
 import { firestore } from "../../lib/firebase";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { async } from "@firebase/util";
 
 const usersCollectionRef = collection(firestore, "users");
 
@@ -21,9 +22,18 @@ export const saveNewUser = async (user) => {
     name: user.name,
     phone: user.phone, 
     onboarded: false,
+    emergency_contact_name: '',
+    emergency_contact_relationship: '',
+    emergency_contact_phone: ''
   }
 
   await setDoc(doc(usersCollectionRef, user.uid), newUser)
     .then(console.log('user stored!'))
     .catch(error => console.log(error));
+}
+
+export const updateUser = async (user, emergency_contact) => {  
+  await updateDoc(doc(usersCollectionRef, user.uid), emergency_contact)
+      .then(console.log('user details updated!'))
+      .catch(error => console.log(error));
 }

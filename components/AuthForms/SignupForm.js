@@ -15,12 +15,13 @@ export default function LoginForm() {
     const [phone, setPhone] = useState('')
 
     const form = useForm({
+
     // form object is in charge of everything except for phone
     initialValues: { 
         name: '',
         email: '' ,
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
     },
     validationRules: {
         name: (value) => value.trim().length <= 100,
@@ -28,6 +29,7 @@ export default function LoginForm() {
         password: (value) => value.trim().length >= 8,
         confirmPassword: (value, values) => value === values.password,
     },
+    
     });
 
     const handleSubmit = async (values) => {

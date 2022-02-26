@@ -7,14 +7,16 @@ const db = admin.firestore();
 
 export const send_message = functions.https.onCall(async (data, context) => {
     // Get the user making the request
+    
     let uid = context.auth.uid;
+    console.log(uid);
 
     if (uid) {
         let user = await db.collection("users").doc(uid).get().catch(() => null);
-        //user.emergency_contact.mobile
+
         if (user) {
-            send('+61490681413',
-            `Hello ${user.emergency_contact.full_name}. You are ${user.full_name}'s emergency contact and they have pressed the panic button and require assistance. View their location here: https://link.stuff`);
+            send(`+${user._fieldsProto.emergency_contact_phone.stringValue}`,
+            `Hello ${user._fieldsProto.emergency_contact_name.stringValue}. You are ${user._fieldsProto.name.stringValue}'s emergency contact and they have pressed the panic button and require assistance. View their location here: https://link.stuff`);
         }
     }
 });
