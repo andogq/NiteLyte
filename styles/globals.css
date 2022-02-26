@@ -24,9 +24,13 @@ a {
 
 /* overriding bottom sheet colours */
 [data-rsbs-scroll] {
-    background-color: #101113;
+    background-color: #07081b;
 }
   
 [data-rsbs-header] {
-    background-color: #1A1B1E;
+    background-color: #1d1e30;
+}
+
+.firebase-emulator-warning {
+    display:none;
 }
