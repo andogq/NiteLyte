@@ -1,5 +1,6 @@
 import { useForm } from "@mantine/hooks";
 import { useState } from "react";
+import { Divider } from "@mantine/core";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import {
@@ -14,90 +15,104 @@ import {
 export default function EmergencyContactForm() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(null);
-  const [phone, setPhone] = useState("");
-
-  const form = useForm({
-    initialValues: {
+  const [contacts, setContacts] = useState([
+    {
       name: "",
       relationship: "",
       phone: "",
     },
-    validationRules: {
-      name: (value) => /^[a-z ,.'-]+$/i.test(value),
-      relationship: (value) => /^[a-z '-]+$/i.test(value),
+    {
+      name: "",
+      relationship: "",
+      phone: "",
     },
+  ]);
+
+  const form = useForm({
+    initialValues: {},
+    validationRules: {},
   });
 
-  const handleSubmit = (values) => {
-    values.phone = phone;
-    console.log(values);
+  const handleInputChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...contacts];
+    list[index][name] = value;
+    setContacts(list);
+  };
+
+  const handlePhoneChange = (value, index) => {
+    const list = [...contacts];
+    list[index]["phone"] = value;
+    setContacts(list);
+  };
+
+  const handleSubmit = (value) => {
+    // setLoading(true);
+    console.log(contacts);
     // TODO: connect to firebase
   };
 
   return (
-    <form
-      onSubmit={form.onSubmit(handleSubmit)}
-      style={{ position: "relative" }}
-    >
-      <LoadingOverlay visible={loading} />
-
+    <div>
       <Title order={3}>Emergency Contact</Title>
+      <form
+        onSubmit={form.onSubmit(handleSubmit)}
+        style={{ position: "relative" }}
+      >
+        <LoadingOverlay visible={loading} />
+        {contacts.map((x, i) => {
+          return (
+            <>
+              <TextInput
+                required
+                label="Full Name"
+                name="name"
+                value={x.name}
+                onChange={(e) => handleInputChange(e, i)}
+                mt={5}
+                pattern="^[A-Za-z ,.'-]+$"
+                title="Please enter a valid name."
+              />
+              <TextInput
+                required
+                label="Relationship to Contact"
+                name="relationship"
+                value={x.relationship}
+                onChange={(e) => handleInputChange(e, i)}
+                mt={5}
+                pattern="^[A-Za-z '-]+$"
+                title="Please enter a valid relationship."
+              />
+              <Box mt={5}>
+                <Text variant="text" size="sm" weight="500">
+                  Phone Number
+                  <Text inherit component="span" color="red">
+                    *
+                  </Text>
+                </Text>
+                <PhoneInput
+                  country={"au"}
+                  onlyCountries={["au"]}
+                  isValid={(value) => {
+                    return value.length === 12;
+                  }}
+                  value={x.phone}
+                  onChange={(value) => handlePhoneChange(value, i)}
+                  // TODO: prevent form from submitting when phone format is invalid
+                  // pattern="^(\+?61|0)4\d{8}$"
+                  // title="Invalid format."
+                />
+              </Box>
+              <br></br> <Divider variant="dashed" />
+            </>
+          );
+        })}
+        <Button type="submit" mt={20}>
+          Submit
+        </Button>
+      </form>
 
-      <TextInput
-        required
-        label="Full Name"
-        error={
-          form.errors.name && (serverError || "Please enter a valid name.")
-        }
-        value={form.values.name}
-        onChange={(event) =>
-          form.setFieldValue("name", event.currentTarget.value)
-        }
-        onFocus={() => {
-          setServerError(null);
-          form.setFieldError("name", false);
-        }}
-        mt={5}
-      />
-
-      <TextInput
-        required
-        label="Relationship to Contact"
-        error={
-          form.errors.relationship &&
-          (serverError || "Please enter a valid relationship.")
-        }
-        value={form.values.relationship}
-        onChange={(event) =>
-          form.setFieldValue("relationship", event.currentTarget.value)
-        }
-        onFocus={() => {
-          setServerError(null);
-          form.setFieldError("relationship", false);
-        }}
-        mt={5}
-      />
-
-      <Box mt={5}>
-        <Text variant="text" size="sm" weight="500">
-          Phone Number{" "}
-          <Text inherit component="span" color="red">
-            *
-          </Text>
-        </Text>
-        <PhoneInput
-          country={"au"}
-          value={form.values.phone}
-          onChange={(value) => {
-            console.log(value);
-            setPhone(value);
-          }}
-        />
-      </Box>
-
-      <Button type="submit" mt={20}>
-        Login
-      </Button>
-    </form>
+      <div style={{ marginTop: 20 }}>{JSON.stringify(contacts)}</div>
+    </div>
   );
 }
