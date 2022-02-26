@@ -4,6 +4,9 @@ service cloud.firestore {
     match /users/{user} {
       allow read, write: if true;
     }
+    match /share_urls/{share_id} {
+      allow read, write: if true;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
