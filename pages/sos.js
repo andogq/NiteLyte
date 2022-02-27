@@ -4,11 +4,9 @@ import { httpsCallable } from "firebase/functions";
 import { functions } from "../lib/firebase";
 import { UserContext } from "../context";
 import Login from "./login";
-import { auth } from "../lib/firebase";
-import { retrieveUserDetails } from "./api/firebase_auth";
 import { ShieldAlert } from "lucide-react";
 
-const send_message = httpsCallable(functions, "send_message");
+const sos = httpsCallable(functions, "sos");
 
 export default function SOS() {
     const { user } = useContext(UserContext);
@@ -18,7 +16,7 @@ export default function SOS() {
     const on_click = async () => {
         set_error(null);
 
-        let { data } = await send_message();
+        let { data } = await sos();
 
         if (data.ok) set_emergency_contact({
             name: data.name,

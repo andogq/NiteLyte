@@ -2,11 +2,14 @@ import { useContext, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { nitelyteDark } from "../../styles/constants";
-import { LoadingOverlay, TextInput, Box, Title, Text } from "@mantine/core";
-import { SubmitButton } from "../Buttons";
+import { LoadingOverlay, TextInput, Box, Title, Text, Button } from "@mantine/core";
 import { UserContext } from "../../context";
+import { updateUser } from "../../pages/api/firebase_auth";
+import { auth } from "../../lib/firebase";
+import { useRouter } from "next/router";
 
 export default function EmergencyContactForm() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [contact, setContact] = useState({
         name: "",
@@ -24,7 +27,7 @@ export default function EmergencyContactForm() {
 
     const handleInputChange = e => {
         const { name, value } = e.target;
-        set_contact((contact) => ({
+        setContact((contact) => ({
             ...contact,
             [name]: value,
         }));
@@ -50,6 +53,7 @@ export default function EmergencyContactForm() {
             console.error(error);
         } finally {
             setLoading(false);
+            router.push("/profile");
         }
     };
 
@@ -65,7 +69,7 @@ export default function EmergencyContactForm() {
                     label="Full Name"
                     name="name"
                     value={contact.name}
-                    onChange={(e) => handleInputChange(e, i)}
+                    onChange={handleInputChange}
                     mt={5}
                     pattern="^[A-Za-z ,.'-]+$"
                     title="Please enter a valid name."
@@ -75,7 +79,7 @@ export default function EmergencyContactForm() {
                     label="Relationship to Contact"
                     name="relationship"
                     value={contact.relationship}
-                    onChange={(e) => handleInputChange(e, i)}
+                    onChange={handleInputChange}
                     mt={5}
                     pattern="^[A-Za-z '-]+$"
                     title="Please enter a valid relationship."
@@ -105,7 +109,7 @@ export default function EmergencyContactForm() {
                             return value.length === 12;
                         }}
                         value={contact.phone}
-                        onChange={(value) => handlePhoneChange(value, i)}
+                        onChange={handlePhoneChange}
                         // TODO: prevent form from submitting when phone format is invalid
                         // pattern="^(\+?61|0)4\d{8}$"
                         // title="Invalid format."
@@ -135,7 +139,7 @@ export default function EmergencyContactForm() {
                 </Text>
 
                 <br />
-                <SubmitButton type="submit" text="Submit" />
+                <Button size="lg" fullWidth onClick={handleSubmit}>Submit</Button>
             </form>
         </div>
     );
