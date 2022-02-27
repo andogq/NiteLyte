@@ -1,9 +1,9 @@
-import { Box, Button, Text } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { auth } from "../lib/firebase";
 import { useContext, useEffect } from "react";
-import Login from "./login";
 import { retrieveUserDetails } from "./api/firebase_auth";
 import { signOut } from "firebase/auth";
+import { useRouter } from "next/router";
 import { SimpleGrid } from "@mantine/core";
 import { UserContext } from "../context";
 import { ProfilePage } from "../components/Profile";
@@ -11,33 +11,36 @@ import { SubmitButton } from "../components/Buttons";
 
 export default function Profile() {
     const { user, setUser } = useContext(UserContext);
+    const router = useRouter();
 
     useEffect(() => {
-        return auth.onAuthStateChanged(async user => {
-            if (user) setUser(
-                await retrieveUserDetails(user.uid).catch(() => null)
-            );
+        return auth.onAuthStateChanged(async (user) => {
+            if (user)
+                setUser(await retrieveUserDetails(user.uid).catch(() => null));
         });
     }, []);
+
+    useEffect(() => user === null && router.push("/login"), [user]);
 
     const _handleSignOut = () => {
         signOut(auth);
         setUser(null);
     };
 
-    const renderProfile = () => (
-        <>
-            <ProfilePage user={user} />
-            <br/>
-            <SimpleGrid cols={1} spacing="xl">
-                <SubmitButton onClick={_handleSignOut} text="Sign Out" />
-            </SimpleGrid>
-        </>
+    return (
+        <Box>
+            {user && (
+                <>
+                    <ProfilePage user={user} />
+                    <br />
+                    <SimpleGrid cols={1} spacing="xl">
+                        <SubmitButton
+                            onClick={_handleSignOut}
+                            text="Sign Out"
+                        />
+                    </SimpleGrid>
+                </>
+            )}
+        </Box>
     );
-
-    const renderScreen = () => {
-        return user ? renderProfile() : <Login />;
-    };
-
-    return <Box>{renderScreen()}</Box>;
 }
