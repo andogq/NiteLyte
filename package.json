@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm load && next build",
+    "build": "npm run load && next build",
     "start": "next start",
     "lint": "next lint",
     "load": "mkdir -p ./public/data && cd scripts && node ./download_data.js"
