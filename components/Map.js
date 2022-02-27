@@ -5,7 +5,7 @@ import mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-import { GeoLocation } from "../context";
+import { GeoLocation, UserContext } from "../context";
 
 import { firestore } from "../lib/firebase";
 import {
@@ -16,9 +16,6 @@ import {
     onSnapshot,
 } from "firebase/firestore";
 
-// TODO: Waiting on auth to use user's ID
-const UID = "SjxqLZ7lmZfATrtznCm96qHYtWmJ";
-
 import { Box, useMantineTheme } from "@mantine/core";
 import mapboxgl from "mapbox-gl";
 
@@ -28,13 +25,20 @@ const users_collection = collection(firestore, "users");
 const share_collection = collection(firestore, "share_urls");
 
 export default function Map({ on_locate }) {
+    const { user } = useContext(UserContext);
+
     const map = useRef(null);
     const map_container = useRef(null);
 
-    const [live_location, set_live_location] = useState(true);
+    const [user_uid, set_user_uid] = useState(null);
 
     const router = useRouter();
     const theme = useMantineTheme();
+
+    useEffect(() => {
+        if (user) set_user_uid(user.uid);
+        else set_user_uid(null);
+    }, [user]);
 
     const [lights, set_lights] = useState([]);
     useEffect(() => {
@@ -120,7 +124,7 @@ export default function Map({ on_locate }) {
         geolocate.on("geolocate", async (position) => {
             on_locate({ lat: position.coords.latitude, lon: position.coords.longitude });
 
-            if (live_location) {
+            if (user_uid) {
                 const user_doc = doc(users_collection, UID);
 
                 await updateDoc(user_doc, {

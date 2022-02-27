@@ -13,8 +13,13 @@ function MyApp({ Component, pageProps }) {
 
     useEffect(() => {
         return auth.onAuthStateChanged(async (user) => {
-            if (user) setUser(await retrieveUserDetails(user.uid).catch(() => null));
-            else setUser(null);
+            if (user) {
+                setUser(
+                    await retrieveUserDetails(user.uid)
+                        .then(u => ({ ...u, uid: user.uid }))
+                        .catch(() => null)
+                );
+            } else setUser(null);
         });
     }, []);
     
