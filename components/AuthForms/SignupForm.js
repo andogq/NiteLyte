@@ -111,7 +111,7 @@ export default function LoginForm() {
                     weight="500"
                     style={{
                         fontSize: "16px",
-                        color: "#acaebf"
+                        color: "#acaebf",
                     }}
                 >
                     Phone Number{" "}
