@@ -3,11 +3,14 @@ import { useState } from "react";
 import { LoadingOverlay, TextInput, PasswordInput } from "@mantine/core";
 import { auth } from "../../lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useContext } from "react";
+import { UserContext } from "../../context";
 import { SubmitButton } from "../Buttons";
 
 export default function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState(null);
+    const { setUser } = useContext(UserContext);
 
     const form = useForm({
         initialValues: {
@@ -31,6 +34,7 @@ export default function LoginForm() {
                 values.email,
                 values.password
             );
+            setUser(creds.user);
         } catch (error) {
             setServerError(error.message);
             form.setFieldError("email", true);
