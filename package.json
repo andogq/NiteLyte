@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm load && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "load": "mkdir -p ./public/data && cd scripts && node ./download_data.js"
   },
   "dependencies": {
     "@mantine/core": "^3.6.11",
