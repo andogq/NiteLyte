@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }) {
             } else setUser(null);
         });
     }, []);
-    
+
     return (
         <UserContext.Provider value={{user,setUser}}>
             <MantineProvider
