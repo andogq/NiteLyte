@@ -13,19 +13,9 @@ export default function Profile() {
     const { user, setUser } = useContext(UserContext);
     const router = useRouter();
 
-    useEffect(() => {
-        return auth.onAuthStateChanged(async (user) => {
-            if (user)
-                setUser(await retrieveUserDetails(user.uid).catch(() => null));
-        });
-    }, []);
-
     useEffect(() => user === null && router.push("/login"), [user]);
 
-    const _handleSignOut = () => {
-        signOut(auth);
-        setUser(null);
-    };
+    const _handleSignOut = () => signOut(auth);
 
     return (
         <Box>
