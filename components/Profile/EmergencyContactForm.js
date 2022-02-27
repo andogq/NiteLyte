@@ -1,173 +1,140 @@
-import { useForm } from "@mantine/hooks";
-import { useState } from "react";
-import { Divider } from "@mantine/core";
+import { useContext, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { nitelyteDark } from "../../styles/constants";
-import {
-    LoadingOverlay,
-    TextInput,
-    Box,
-    Button,
-    Title,
-    Text,
-} from "@mantine/core";
+import { LoadingOverlay, TextInput, Box, Title, Text } from "@mantine/core";
 import { SubmitButton } from "../Buttons";
+import { UserContext } from "../../context";
 
 export default function EmergencyContactForm() {
-    const emptyContact = {
+    const [loading, setLoading] = useState(false);
+    const [contact, setContact] = useState({
         name: "",
         relationship: "",
         phone: "",
-    };
-    const [loading, setLoading] = useState(false);
-    const [serverError, setServerError] = useState(null);
-    const [contacts, setContacts] = useState([
-        { ...emptyContact },
-        { ...emptyContact },
-    ]);
-
-    const form = useForm({
-        initialValues: {},
-        validationRules: {},
     });
 
-    const handleInputChange = (e, index) => {
+    const { user } = useContext(UserContext);
+
+    useState(() => user !== null && setContact({
+        name: user.emergency_contact_name,
+        phone: user.emergency_contact_phone,
+        relationship: user.emergency_contact_relationship
+    }), [user]);
+
+    const handleInputChange = e => {
         const { name, value } = e.target;
-        const list = [...contacts];
-        list[index][name] = value;
-        setContacts(list);
+        set_contact((contact) => ({
+            ...contact,
+            [name]: value,
+        }));
     };
 
-    const handlePhoneChange = (value, index) => {
-        const list = [...contacts];
-        list[index]["phone"] = value;
-        setContacts(list);
-    };
-
-    const handleRemoveClick = (index) => {
-        const list = [...contacts];
-        list.splice(index, 1);
-        setContacts(list);
-    };
-
-    const handleAddClick = () => {
-        setContacts([...contacts, { ...emptyContact }]);
+    const handlePhoneChange = value => {
+        setContact((contact) => ({
+            ...contact,
+            phone: value,
+        }));
     };
 
     const handleSubmit = () => {
         setLoading(true);
 
         try {
-            updateUser(auth.currentUser, { 
-                emergency_contact_name: contacts[0].name,
-                emergency_contact_relationship: contacts[0].relationship,
-                emergency_contact_phone: contacts[0].phone,
+            updateUser(auth.currentUser, {
+                emergency_contact_name: contact.name,
+                emergency_contact_relationship: contact.relationship,
+                emergency_contact_phone: contact.phone,
             });
         } catch (error) {
-            console.error(error)
+            console.error(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
     return (
         <div>
             <Title order={2}>Emergency Contacts</Title>
-            <form
-                onSubmit={handleSubmit}
-                style={{ position: "relative" }}
-            >
+
+            <form onSubmit={handleSubmit} style={{ position: "relative" }}>
                 <LoadingOverlay visible={loading} />
-                {contacts.map((x, i) => {
-                    return (
-                        <>
-                            {i == 0 && <Title order={4}>Primary Contact</Title>}
-                            {i == 1 && (
-                                <Title order={4}>Secondary Contact</Title>
-                            )}
-                            <TextInput
-                                required
-                                label="Full Name"
-                                name="name"
-                                value={x.name}
-                                onChange={(e) => handleInputChange(e, i)}
-                                mt={5}
-                                pattern="^[A-Za-z ,.'-]+$"
-                                title="Please enter a valid name."
-                            />
-                            <TextInput
-                                required
-                                label="Relationship to Contact"
-                                name="relationship"
-                                value={x.relationship}
-                                onChange={(e) => handleInputChange(e, i)}
-                                mt={5}
-                                pattern="^[A-Za-z '-]+$"
-                                title="Please enter a valid relationship."
-                            />
-                            <Box mt={5}>
-                                <Text
-                                    variant="text"
-                                    weight="500"
-                                    style={{
-                                        "font-size": "16px",
-                                        color: "#acaebf",
-                                    }}
-                                >
-                                    Phone Number{" "}
-                                    <Text inherit component="span" color="red">
-                                        *
-                                    </Text>
-                                </Text>
-                                <PhoneInput
-                                    // TODO: inputProps doesnt work
-                                    // inputProps={{
-                                    //   required: true,
-                                    // }}
-                                    country={"au"}
-                                    onlyCountries={["au"]}
-                                    isValid={(value) => {
-                                        return value.length === 12;
-                                    }}
-                                    value={x.phone}
-                                    onChange={(value) =>
-                                        handlePhoneChange(value, i)
-                                    }
-                                    // TODO: prevent form from submitting when phone format is invalid
-                                    // pattern="^(\+?61|0)4\d{8}$"
-                                    // title="Invalid format."
-                                    inputStyle={{
-                                        backgroundColor: nitelyteDark[5],
-                                        borderWidth: 0,
-                                        color: nitelyteDark[0],
-                                    }}
-                                    buttonStyle={{
-                                        backgroundColor: nitelyteDark[5],
-                                        borderColor: nitelyteDark[4],
-                                    }}
-                                    dropdownStyle={{
-                                        color: nitelyteDark[9],
-                                    }}
-                                />
-                            </Box>
-                            {contacts.length >= 3 && i >= 2 && (
-                                <Text
-                                    onClick={() => handleRemoveClick(i)}
-                                    color="dimmed"
-                                >
-                                    - Remove
-                                </Text>
-                            )}
-                            <br></br> <Divider variant="dashed" />
-                        </>
-                    );
-                })}
-                <Text onClick={handleAddClick} color="dimmed">
-                    + Add more emergency contacts
+                <Title order={4}>Emergency Contact</Title>
+                <TextInput
+                    required
+                    label="Full Name"
+                    name="name"
+                    value={contact.name}
+                    onChange={(e) => handleInputChange(e, i)}
+                    mt={5}
+                    pattern="^[A-Za-z ,.'-]+$"
+                    title="Please enter a valid name."
+                />
+                <TextInput
+                    required
+                    label="Relationship to Contact"
+                    name="relationship"
+                    value={contact.relationship}
+                    onChange={(e) => handleInputChange(e, i)}
+                    mt={5}
+                    pattern="^[A-Za-z '-]+$"
+                    title="Please enter a valid relationship."
+                />
+                <Box mt={5}>
+                    <Text
+                        variant="text"
+                        weight="500"
+                        style={{
+                            fontSize: "16px",
+                            color: "#acaebf",
+                        }}
+                    >
+                        Phone Number{" "}
+                        <Text inherit component="span" color="red">
+                            *
+                        </Text>
+                    </Text>
+                    <PhoneInput
+                        // TODO: inputProps doesnt work
+                        // inputProps={{
+                        //   required: true,
+                        // }}
+                        country={"au"}
+                        onlyCountries={["au"]}
+                        isValid={(value) => {
+                            return value.length === 12;
+                        }}
+                        value={contact.phone}
+                        onChange={(value) => handlePhoneChange(value, i)}
+                        // TODO: prevent form from submitting when phone format is invalid
+                        // pattern="^(\+?61|0)4\d{8}$"
+                        // title="Invalid format."
+                        inputStyle={{
+                            backgroundColor: nitelyteDark[5],
+                            borderWidth: 0,
+                            color: nitelyteDark[0],
+                        }}
+                        buttonStyle={{
+                            backgroundColor: nitelyteDark[5],
+                            borderColor: nitelyteDark[4],
+                        }}
+                        dropdownStyle={{
+                            color: nitelyteDark[9],
+                        }}
+                    />
+                </Box>
+
+                <Text
+                    size="sm"
+                    style={{
+                        color: "#acaebf",
+                        paddingTop: 20
+                    }}
+                >
+                    Multiple emergency contacts coming soon...
                 </Text>
 
-                <br></br>
+                <br />
                 <SubmitButton type="submit" text="Submit" />
             </form>
         </div>

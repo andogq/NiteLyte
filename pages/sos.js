@@ -63,6 +63,9 @@ export default function SOS() {
                     style={{ fontSize: 30, height: 50 }}
                     onClick={on_click}
                     leftIcon={<ShieldAlert size={30} />}
+                    sx={theme => ({
+                        backgroundColor: theme.colors.red[6]
+                    })}
                 >
                     Emergency SOS
                 </Button>
