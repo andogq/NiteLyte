@@ -72,7 +72,7 @@ export default function Map({ on_locate }) {
 
             map.current.flyTo({center: [share.lon, share.lat]});
         }
-    }, [map.current, share]);
+    }, [map.current?.loaded, share, map.current?.getSource("share_location")]);
 
     useEffect(async () => {
         let share_id = router.query.share;
@@ -83,7 +83,7 @@ export default function Map({ on_locate }) {
             if (share_ref.exists()) {
                 let share = share_ref.data();
 
-                if (Date.now() < share.expiry.toMillis()) {
+                if (Date.now() < share.expiry) {
                     // Monitor user for update (return unsubscribe function)
                     return onSnapshot(
                         doc(users_collection, share.user),
@@ -96,11 +96,6 @@ export default function Map({ on_locate }) {
                     set_share(null);
                 }
             }
-
-            // Return unsubscribe function
-            return onSnapshot(doc(share_collection, share_id), (snapshot) => {
-                let data = snapshot.data();
-            });
         }
     }, [map.current, router.query.share]);
 
@@ -125,7 +120,7 @@ export default function Map({ on_locate }) {
             on_locate({ lat: position.coords.latitude, lon: position.coords.longitude });
 
             if (user_uid) {
-                const user_doc = doc(users_collection, UID);
+                const user_doc = doc(users_collection, user_uid);
 
                 await updateDoc(user_doc, {
                     last_location: {
