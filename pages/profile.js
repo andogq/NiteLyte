@@ -13,15 +13,11 @@ export default function Profile() {
     const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) {
-                retrieveUserDetails(user.uid)
-                    .then(setUser(user))
-                    .catch((error) => console.error(error));
-            }
+        return auth.onAuthStateChanged(async user => {
+            if (user) setUser(
+                await retrieveUserDetails(user.uid).catch(() => null)
+            );
         });
-        // cleanup to prevent memory leaks
-        return unsubscribe;
     }, []);
 
     const _handleSignOut = () => {
@@ -31,8 +27,8 @@ export default function Profile() {
 
     const renderProfile = () => (
         <>
-            <ProfilePage />
-            <br></br>
+            <ProfilePage user={user} />
+            <br/>
             <SimpleGrid cols={1} spacing="xl">
                 <SubmitButton onClick={_handleSignOut} text="Sign Out" />
             </SimpleGrid>
