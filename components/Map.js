@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 
 // TODO: Waiting on auth to use user's ID
-const UID = "LlmWiUVJFYaKjJr5tlGd";
+const UID = "SjxqLZ7lmZfATrtznCm96qHYtWmJ";
 
 import { Box, useMantineTheme } from "@mantine/core";
 import mapboxgl from "mapbox-gl";

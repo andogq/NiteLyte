@@ -55,17 +55,27 @@ export default function EmergencyContactForm() {
         setContacts([...contacts, { ...emptyContact }]);
     };
 
-    const handleSubmit = (value) => {
-        // setLoading(true);
-        console.log(contacts);
-        // TODO: connect to firebase
+    const handleSubmit = () => {
+        setLoading(true);
+
+        try {
+            updateUser(auth.currentUser, { 
+                emergency_contact_name: contacts[0].name,
+                emergency_contact_relationship: contacts[0].relationship,
+                emergency_contact_phone: contacts[0].phone,
+            });
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
     };
 
     return (
         <div>
             <Title order={2}>Emergency Contacts</Title>
             <form
-                onSubmit={form.onSubmit(handleSubmit)}
+                onSubmit={handleSubmit}
                 style={{ position: "relative" }}
             >
                 <LoadingOverlay visible={loading} />
