@@ -5,7 +5,6 @@ import { DisabledOptionButton, OptionButton } from "../Buttons";
 import { useEffect } from "react";
 
 export default function ProfilePage({ user }) {
-    useEffect(() => console.log(user), [user]);
     return (
         <div>
             <Title order={2}>Profile</Title>

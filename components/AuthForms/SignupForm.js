@@ -109,7 +109,10 @@ export default function LoginForm() {
                 <Text
                     variant="text"
                     weight="500"
-                    style={{ "font-size": "16px", color: "#acaebf" }}
+                    style={{
+                        fontSize: "16px",
+                        color: "#acaebf"
+                    }}
                 >
                     Phone Number{" "}
                     <Text inherit component="span" color="red">

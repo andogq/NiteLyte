@@ -11,7 +11,7 @@ export default function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState(null);
 
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
     const form = useForm({
         initialValues: {

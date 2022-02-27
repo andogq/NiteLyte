@@ -1,12 +1,16 @@
-import { Box, TextInput, Button, LoadingOverlay, PasswordInput, Tabs } from "@mantine/core";
-import { useForm } from "@mantine/hooks";
-import { useState } from "react";
+import { Box, Tabs } from "@mantine/core";
+import { useContext, useEffect, useState } from "react";
 import { User, UserPlus } from "lucide-react";
 import { LoginForm, SignupForm } from "../components/AuthForms";
+import { UserContext } from "../context";
+import { useRouter } from "next/router";
 
 export default function Login() {
+    const { user } = useContext(UserContext);
+    const router = useRouter();
+    const [activeTab, setActiveTab] = useState("");
 
-    const [activeTab, setActiveTab] = useState('');
+    useEffect(() => user !== null && router.push("/profile"), [user]);
 
     const _handleTabChange = (tabKey) => {
         setActiveTab(tabKey)
@@ -14,7 +18,7 @@ export default function Login() {
 
     return (
         <Box m={10} >
-            <Tabs active={activeTab} onTabChange={_handleTabChange}>
+            <Tabs active={activeTab} onTabChange={_handleTabChange} grow>
                 <Tabs.Tab label="Login" tabKey="login" icon={<User />}>
                     <LoginForm/>
                 </Tabs.Tab>
