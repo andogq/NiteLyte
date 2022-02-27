@@ -1,7 +1,6 @@
 import { Box } from "@mantine/core";
 import { auth } from "../lib/firebase";
 import { useContext, useEffect } from "react";
-import { retrieveUserDetails } from "./api/firebase_auth";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import { SimpleGrid } from "@mantine/core";
@@ -10,22 +9,12 @@ import { ProfilePage } from "../components/Profile";
 import { SubmitButton } from "../components/Buttons";
 
 export default function Profile() {
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const router = useRouter();
-
-    useEffect(() => {
-        return auth.onAuthStateChanged(async (user) => {
-            if (user)
-                setUser(await retrieveUserDetails(user.uid).catch(() => null));
-        });
-    }, []);
 
     useEffect(() => user === null && router.push("/login"), [user]);
 
-    const _handleSignOut = () => {
-        signOut(auth);
-        setUser(null);
-    };
+    const _handleSignOut = () => signOut(auth);
 
     return (
         <Box>

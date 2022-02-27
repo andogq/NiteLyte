@@ -5,7 +5,7 @@ import mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-import { GeoLocation } from "../context";
+import { GeoLocation, UserContext } from "../context";
 
 import { firestore } from "../lib/firebase";
 import {
@@ -16,9 +16,6 @@ import {
     onSnapshot,
 } from "firebase/firestore";
 
-// TODO: Waiting on auth to use user's ID
-const UID = "LlmWiUVJFYaKjJr5tlGd";
-
 import { Box, useMantineTheme } from "@mantine/core";
 import mapboxgl from "mapbox-gl";
 
@@ -28,13 +25,20 @@ const users_collection = collection(firestore, "users");
 const share_collection = collection(firestore, "share_urls");
 
 export default function Map({ on_locate }) {
+    const { user } = useContext(UserContext);
+
     const map = useRef(null);
     const map_container = useRef(null);
 
-    const [live_location, set_live_location] = useState(true);
+    const [user_uid, set_user_uid] = useState(null);
 
     const router = useRouter();
     const theme = useMantineTheme();
+
+    useEffect(() => {
+        if (user) set_user_uid(user.uid);
+        else set_user_uid(null);
+    }, [user]);
 
     const [lights, set_lights] = useState([]);
     useEffect(() => {
@@ -68,7 +72,7 @@ export default function Map({ on_locate }) {
 
             map.current.flyTo({center: [share.lon, share.lat]});
         }
-    }, [map.current, share]);
+    }, [map.current?.loaded, share, map.current?.getSource("share_location")]);
 
     useEffect(async () => {
         let share_id = router.query.share;
@@ -79,7 +83,7 @@ export default function Map({ on_locate }) {
             if (share_ref.exists()) {
                 let share = share_ref.data();
 
-                if (Date.now() < share.expiry.toMillis()) {
+                if (Date.now() < share.expiry) {
                     // Monitor user for update (return unsubscribe function)
                     return onSnapshot(
                         doc(users_collection, share.user),
@@ -92,11 +96,6 @@ export default function Map({ on_locate }) {
                     set_share(null);
                 }
             }
-
-            // Return unsubscribe function
-            return onSnapshot(doc(share_collection, share_id), (snapshot) => {
-                let data = snapshot.data();
-            });
         }
     }, [map.current, router.query.share]);
 
@@ -120,8 +119,8 @@ export default function Map({ on_locate }) {
         geolocate.on("geolocate", async (position) => {
             on_locate({ lat: position.coords.latitude, lon: position.coords.longitude });
 
-            if (live_location) {
-                const user_doc = doc(users_collection, UID);
+            if (user_uid) {
+                const user_doc = doc(users_collection, user_uid);
 
                 await updateDoc(user_doc, {
                     last_location: {
