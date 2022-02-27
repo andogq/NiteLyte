@@ -9,9 +9,9 @@ export default function ProfilePage({ user }) {
             <Title order={2}>Profile</Title>
             <br />
             <SimpleGrid cols={1} spacing="xl">
-                <DisabledOptionButton text={user.displayName} />
+                <DisabledOptionButton text={user.name} />
                 <DisabledOptionButton text={user.email} />
-                <DisabledOptionButton text={user.phoneNumber} />
+                <DisabledOptionButton text={user.phone} />
                 <OptionButton
                     text="Emergency Contacts"
                     href="/add_emergency_contact"

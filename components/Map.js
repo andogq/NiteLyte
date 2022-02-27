@@ -31,11 +31,13 @@ export default function Map({ on_locate }) {
     const map_container = useRef(null);
 
     const [user_uid, set_user_uid] = useState(null);
+    const [last_location, set_last_location] = useState(null);
 
     const router = useRouter();
     const theme = useMantineTheme();
 
     useEffect(() => {
+        console.log(user);
         if (user) set_user_uid(user.uid);
         else set_user_uid(null);
     }, [user]);
@@ -52,8 +54,8 @@ export default function Map({ on_locate }) {
                         coordinates: light[1],
                     },
                     properties: {
-                        lux: light[0]
-                    }
+                        lux: light[0],
+                    },
                 })),
             });
     }, [map.current, lights]);
@@ -70,7 +72,7 @@ export default function Map({ on_locate }) {
                 },
             });
 
-            map.current.flyTo({center: [share.lon, share.lat]});
+            map.current.flyTo({ center: [share.lon, share.lat], zoom: 18 });
         }
     }, [map.current?.loaded, share, map.current?.getSource("share_location")]);
 
@@ -99,6 +101,16 @@ export default function Map({ on_locate }) {
         }
     }, [map.current, router.query.share]);
 
+    useEffect(async () => {
+        if (user_uid) {
+            const user_doc = doc(users_collection, user_uid);
+
+            await updateDoc(user_doc, {
+                last_location
+            });
+        }
+    }, [user_uid, last_location])
+
     useEffect(() => {
         let _map = new mapboxgl.Map({
             container: map_container.current,
@@ -117,20 +129,17 @@ export default function Map({ on_locate }) {
             showAccuracyCircle: true,
         });
         geolocate.on("geolocate", async (position) => {
-            on_locate({ lat: position.coords.latitude, lon: position.coords.longitude });
+            on_locate({
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+            });
 
-            if (user_uid) {
-                const user_doc = doc(users_collection, user_uid);
-
-                await updateDoc(user_doc, {
-                    last_location: {
-                        accuracy: position.coords.accuracy,
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude,
-                        time: position.timestamp,
-                    },
-                });
-            }
+            set_last_location({
+                accuracy: position.coords.accuracy,
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                time: position.timestamp,
+            });
         });
         _map.addControl(geolocate);
 
@@ -138,7 +147,7 @@ export default function Map({ on_locate }) {
             const label_layer =
                 _map.getStyle().layers.find((layer) => layer.type === "symbol")
                     ?.id ?? null;
-            
+
             geolocate.trigger();
 
             _map.addSource("share_location", {
@@ -181,18 +190,29 @@ export default function Map({ on_locate }) {
                             "interpolate",
                             ["linear"],
                             ["zoom"],
-                            10, 5,
-                            13, 10,
-                            15, 20,
+                            10,
+                            5,
+                            13,
+                            10,
+                            15,
+                            20,
                         ],
                         "heatmap-color": [
-                            "interpolate", ["exponential", 10], ["heatmap-density"],
-                            0, "rgba(0, 0, 0, 0)",
-                            0.1, theme.colors.yellow[0],
-                            0.3, theme.colors.yellow[1],
-                            0.7, theme.colors.yellow[2],
-                            0.9, theme.colors.yellow[3],
-                            1, theme.colors.yellow[4],
+                            "interpolate",
+                            ["exponential", 10],
+                            ["heatmap-density"],
+                            0,
+                            "rgba(0, 0, 0, 0)",
+                            0.1,
+                            theme.colors.yellow[0],
+                            0.3,
+                            theme.colors.yellow[1],
+                            0.7,
+                            theme.colors.yellow[2],
+                            0.9,
+                            theme.colors.yellow[3],
+                            1,
+                            theme.colors.yellow[4],
                         ],
                         "heatmap-opacity": 0.75,
                     },
