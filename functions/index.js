@@ -6,17 +6,34 @@ admin.initializeApp();
 const db = admin.firestore();
 
 export const send_message = functions.https.onCall(async (data, context) => {
-    // Get the user making the request
-
     let uid = context.auth.uid;
-    console.log(uid);
 
     if (uid) {
-        let user = await db.collection("users").doc(uid).get().catch(() => null);
+        let user_snapshot = await db.collection("users").doc(uid).get();
 
-        if (user) {
-            send(`+${user._fieldsProto.emergency_contact_phone.stringValue}`,
-            `Hello ${user._fieldsProto.emergency_contact_name.stringValue}. You are ${user._fieldsProto.name.stringValue}'s emergency contact and they have pressed the panic button and require assistance. View their location here: https://link.stuff`);
+        if (user_snapshot.exists) {
+            let user = user_snapshot.data();
+
+            if (user.emergency_contact_name && user.emergency_contact_phone) {
+                send(
+                    `+${user.emergency_contact_phone}`,
+                    `Hello ${user.emergency_contact_name}. You are ${user.name}'s emergency contact and they have pressed the panic button and require assistance. View their location here: https://link.stuff`
+                );
+
+                return {
+                    ok: true,
+                    name: user.emergency_contact_name,
+                    phone: user.emergency_contact_phone
+                }
+            } return {
+                ok: false,
+                message: "No emergency contact"
+            }
         }
+    }
+
+    return {
+        ok: false,
+        message: "Problem authenticating user"
     }
 }); 

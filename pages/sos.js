@@ -11,33 +11,27 @@ import { ShieldAlert } from "lucide-react";
 const send_message = httpsCallable(functions, "send_message");
 
 export default function SOS() {
-    const { user, setUser } = useContext(UserContext);
-    const [opened, setOpened] = useState(false);
+    const { user } = useContext(UserContext);
+    const [emergency_contact, set_emergency_contact] = useState(null);
+    const [error, set_error] = useState(null);
 
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) {
-                retrieveUserDetails(user.uid)
-                    .then(setUser(user))
-                    .catch((error) => console.log(error));
-            }
+    const on_click = async () => {
+        set_error(null);
+
+        let { data } = await send_message();
+
+        if (data.ok) set_emergency_contact({
+            name: data.name,
+            phone: data.phone
         });
-        // cleanup to prevent memory leaks
-        return unsubscribe;
-    }, []);
-
-    const on_click = () => {
-        console.log("Sending message");
-        send_message();
-        setOpened(true);
+        else set_error(data.message);
     };
 
     const renderSos = () => (
         <>
-            <Modal opened={opened} onClose={() => setOpened(false)}>
+            <Modal opened={emergency_contact !== null} onClose={() => set_emergency_contact(null)}>
                 <Text size="sm" weight={500}>
-                    A text message with your current location has been sent to
-                    your emergency contacts!
+                    A text message with your current location has been sent to {emergency_contact?.name} ({emergency_contact?.phone})
                 </Text>
             </Modal>
             <Box>
@@ -52,6 +46,17 @@ export default function SOS() {
                     Press the 'Emergency SOS' button to alert your emergency
                     contacts with a text message
                 </Text>
+                {error && (
+                    <Text
+                        sx={theme => ({
+                            color: theme.colors.red[5],
+                            marginTop: 20,
+                            marginBottom: 20
+                        })}
+                    >
+                        {error}
+                    </Text>
+                )}
                 <Button
                     variant="filled"
                     fullWidth
