@@ -2,7 +2,6 @@ import { Divider } from "@mantine/core";
 import "react-phone-input-2/lib/style.css";
 import { Title, SimpleGrid } from "@mantine/core";
 import { DisabledOptionButton, OptionButton } from "../Buttons";
-import { useEffect } from "react";
 
 export default function ProfilePage({ user }) {
     return (
@@ -16,6 +15,10 @@ export default function ProfilePage({ user }) {
                 <OptionButton
                     text="Emergency Contacts"
                     href="/add_emergency_contact"
+                />
+                <OptionButton
+                    text="Submit a Report"
+                    href="/report"
                 />
                 <OptionButton text="Settings" href="/settings" />
                 <OptionButton text="Help and Feedback" />
