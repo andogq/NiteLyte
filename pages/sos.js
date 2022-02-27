@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Box, Button, Text, Modal } from "@mantine/core";
+import { Box, Button, Text, Modal, Loader } from "@mantine/core";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../lib/firebase";
 import { UserContext } from "../context";
@@ -12,9 +12,11 @@ export default function SOS() {
     const { user } = useContext(UserContext);
     const [emergency_contact, set_emergency_contact] = useState(null);
     const [error, set_error] = useState(null);
+    const [loading, set_loading] = useState(false);
 
     const on_click = async () => {
         set_error(null);
+        set_loading(true);
 
         let { data } = await sos();
 
@@ -23,6 +25,8 @@ export default function SOS() {
             phone: data.phone
         });
         else set_error(data.message);
+
+        set_loading(false);
     };
 
     const renderSos = () => (
@@ -60,10 +64,11 @@ export default function SOS() {
                     fullWidth
                     style={{ fontSize: 30, height: 50 }}
                     onClick={on_click}
-                    leftIcon={<ShieldAlert size={30} />}
+                    leftIcon={loading ? <Loader color="white" size={30}/> : <ShieldAlert size={30} />}
                     sx={theme => ({
                         backgroundColor: theme.colors.red[6]
                     })}
+                    disabled={loading}
                 >
                     Emergency SOS
                 </Button>

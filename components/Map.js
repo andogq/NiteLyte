@@ -72,7 +72,7 @@ export default function Map({ on_locate }) {
                 },
             });
 
-            map.current.flyTo({ center: [share.lon, share.lat] });
+            map.current.flyTo({ center: [share.lon, share.lat], zoom: 18 });
         }
     }, [map.current?.loaded, share, map.current?.getSource("share_location")]);
 
